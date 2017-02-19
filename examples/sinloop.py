@@ -15,13 +15,13 @@ HOSTNAME = "192.168.0.61"
 USER = "hakkeri"
 
 # Valojen kirkkaus, 0 < BRIGHTNESS < 1
-BRIGHTNESS = 1
+BRIGHTNESS = 0.5
 
 
 
 class Instanssi(object):
     """
-    Python-luokka Instanssin valojen hallintaan. Laittaa vihreän valon kiertämään.
+    Python-luokka Instanssin valojen hallintaan.
     """
 
 
