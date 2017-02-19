@@ -14,6 +14,9 @@ HOSTNAME = "192.168.0.61"
 # Paketin lähettäjä
 USER = "hakkeri"
 
+# Valojen kirkkaus, 0 < BRIGHTNESS < 1
+BRIGHTNESS = 1
+
 
 
 class Instanssi(object):
@@ -67,7 +70,7 @@ class Instanssi(object):
 
 def intensity(angle):
     # Siirtää käyrän Y-koordinaatiston välille 0-1 ja kertoo väriavaruuden maksimilla
-    intensity = int(((math.sin(angle) * 0.5 + 0.5)*255)) % 256
+    intensity = int(((math.sin(angle) * 0.5 + 0.5)* 255)* BRIGHTNESS) % 256
     return intensity
         
 
@@ -77,7 +80,6 @@ valot = Instanssi(USER, HOSTNAME, 9909)
 # Markan plasmaefekti kaikille valoille yhtäaikaa
 
 angle = 0
-i = 0
 
 try:
     while True:
@@ -92,10 +94,6 @@ try:
             valot.set(i, intensr, intensg, intensb)
         valot.send()
 
-        
-
-        i += 1
-        i = i % NUM_LIGHTS
 
         angle += 0.01
         angle = angle % 360
