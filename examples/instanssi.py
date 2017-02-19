@@ -4,11 +4,23 @@
 import socket
 import time
 
+# DMX-valojen määrä
+NUM_LIGHTS = 24
+
+# Valopalvelimen IP-osoite
+HOSTNAME = "192.168.0.61"
+
+# Paketin lähettäjä
+USER = "hakkeri"
+
+
 
 class Instanssi(object):
     """
-    Python-luokka Instanssin valojen hallintaan. 
+    Python-luokka Instanssin valojen hallintaan. Laittaa vihreän valon kiertämään.
     """
+
+
 
     def __init__(self, nick, ip, port):
         self.ip = ip
@@ -18,15 +30,16 @@ class Instanssi(object):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.reset()
 
+
     def reset(self):
         """Resetoi UDP-paketti"""
         self.packet = [ 1 ] # Speksin versio aina yksi
 
-        self.packet.append(0) # Aloita tagi osa
+        self.packet.append(0) # Aloita nimitagi
         for char in self.nick:
-            # Muunna nickin merkit ascii koodeiksi
+            # Muunna nickin merkit ASCII:ksi
             self.packet.append(ord(char))
-        self.packet.append(0) # Lopeta tagi osa
+        self.packet.append(0) # Lopeta nimitagi
 
 
     def set(self, i, r, g, b):
@@ -34,11 +47,12 @@ class Instanssi(object):
         self.packet += [
             1, # Tehosteen tyyppi on yksi eli valo
             i, # Valon indeksi
-            0, # Laajennustavu. Aina nolla. Älä välitä tästä
-            r, # Punaisuus
-            g, # Vihreys
-            b, # Sinisyys
+            0, # Laajennustavu, aina nolla.
+            r, # Punaisen määrä, 0-255
+            g, # Vihreän määrä, 0-255
+            b, # Sinisen määrä, 0-255
         ]
+
 
     def send(self):
         """Lähetä asetetut tavut ja nollaa pakettilista"""
@@ -49,16 +63,13 @@ class Instanssi(object):
 
 
 
-
-
-
-valot = Instanssi("instanssilainen", "172.18.12.2", 9909)
+valot = Instanssi(USER, HOSTNAME, 9909) # Muokkaa nick ja IP oikeiksi
 
 
 # Sinistä kansalle. Aseta kaikki valot sinisiksi
-for i in range(0, 36):
+for i in range(0, NUM_LIGHTS):
     valot.set(i, 0, 0,255)
-# Lähetä sinisyys käskyt kaikki kerralla
+# Lähetä valokäskyt kaikki kerralla
 valot.send()
 
 
@@ -70,14 +81,12 @@ while True:
     valot.set(i, 0, 255, 0)
     valot.send()
 
-    time.sleep(0.3)
+    time.sleep(0.05)
 
     valot.set(i, 0, 0,255)
     valot.send()
 
     i += 1
-    i = i % 36
+    i = i % NUM_LIGHTS
 
-    print i
-
-
+    print(i)
